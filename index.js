@@ -1,6 +1,10 @@
 const express = require('express');
+
 const bodyParser = require('body-parser');
-const fs = require('fs').promises;
+
+const { talkerRouter } = require('./routes');
+
+const { error } = require('./middlewares');
 
 const app = express();
 app.use(bodyParser.json());
@@ -13,17 +17,9 @@ app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
 
-app.get('/talker', async (_req, res, next) => {
-  try {
-    const talkers = await fs.readFile('./talker.json', 'utf-8');
-    res.status(200).json(JSON.parse(talkers));
-  } catch (error) {
-    next({
-      status: 400,
-      message: 'Error',
-    });
-  }
-});
+app.use('/talker', talkerRouter);
+
+app.use(error);
 
 app.listen(PORT, () => {
   console.log('Online');
