@@ -18,6 +18,20 @@ router.get('/', rescue(async (_req, res, _next) => {
     return res.status(200).json(talkers);
 }));
 
+router.get('/search',
+    rescue(tokenValid),
+    rescue(async (req, res, _next) => {
+        const { q: name } = req.query;
+
+        const talkersJson = await fs.readFile(TALKER_FILE);
+        const talkers = JSON.parse(talkersJson);
+
+        const targetTalkers = talkers
+        .filter((t) => t.name.toLowerCase().includes(name.toLowerCase()));
+
+        res.status(200).json(targetTalkers);
+    }));
+
 router.post('/', 
     rescue(tokenValid),
     rescue(nameValid),
