@@ -62,6 +62,21 @@ router.put('/:id',
         res.status(200).json(talkers[talkerIndex]);
     }));
 
+router.delete('/:id',
+    rescue(tokenValid),
+    rescue(async (req, res, _next) => {
+        const { id } = req.params;
+
+        const talkersJson = await fs.readFile(TALKER_FILE);
+        const talkers = JSON.parse(talkersJson);
+
+        const newTalkers = talkers.filter((t) => t.id !== +id);
+
+        await fs.writeFile(TALKER_FILE, JSON.stringify(newTalkers));
+
+        res.status(200).json({ message: 'Pessoa palestrante deletada com sucesso' });
+    }));
+
 router.get('/:id', rescue(async (req, res, _next) => {
     const { id } = req.params;
 
