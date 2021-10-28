@@ -1,3 +1,5 @@
 const talkerRouter = require('./talkerRouter');
 
-module.exports = { talkerRouter };
+const loginRouter = require('./loginRouter');
+
+module.exports = { talkerRouter, loginRouter };

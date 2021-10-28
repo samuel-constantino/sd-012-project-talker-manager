@@ -1,3 +1,7 @@
 const error = require('./error');
 
-module.exports = { error };
+const emailValid = require('./emailValid');
+
+const passwordValid = require('./passwordValid');
+
+module.exports = { error, emailValid, passwordValid };
