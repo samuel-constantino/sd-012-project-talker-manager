@@ -39,6 +39,29 @@ router.post('/',
         return res.status(201).json(newTalker);
 }));
 
+router.put('/:id',
+    rescue(tokenValid),
+    rescue(nameValid),
+    rescue(ageValid),
+    rescue(talkValid),
+    rescue(async (req, res, _next) => {
+        const { id } = req.params;
+        const { name, age, talk } = req.body;
+
+        const talkersJson = await fs.readFile(TALKER_FILE);
+        const talkers = JSON.parse(talkersJson);
+
+        const talkerIndex = talkers.findIndex((t) => t.id === +id);
+
+        if (talkerIndex === -1) return res.status(404).json({ message: 'Page not found' });
+
+        talkers[talkerIndex] = { ...talkers[talkerIndex], name, age, talk };
+
+        await fs.writeFile('./talker.json', JSON.stringify(talkers));
+
+        res.status(200).json(talkers[talkerIndex]);
+    }));
+
 router.get('/:id', rescue(async (req, res, _next) => {
     const { id } = req.params;
 
