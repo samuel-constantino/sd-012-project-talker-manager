@@ -10,11 +10,11 @@ const router = express.Router();
 
 const TALKER_FILE = './talker.json';
 
-router.get('/', rescue(async (_req, res, _next) => {
-    const talkersJson = await fs.readFile(TALKER_FILE);
+const { readJsonFile } = require('../utilities');
 
-    const talkers = await JSON.parse(talkersJson);
-    
+router.get('/', rescue(async (_req, res, _next) => {
+    const talkers = await readJsonFile(TALKER_FILE);
+
     return res.status(200).json(talkers);
 }));
 
@@ -23,11 +23,10 @@ router.get('/search',
     rescue(async (req, res, _next) => {
         const { q: name } = req.query;
 
-        const talkersJson = await fs.readFile(TALKER_FILE);
-        const talkers = JSON.parse(talkersJson);
+        const talkers = await readJsonFile(TALKER_FILE);
 
         const targetTalkers = talkers
-        .filter((t) => t.name.toLowerCase().includes(name.toLowerCase()));
+            .filter((t) => t.name.toLowerCase().includes(name.toLowerCase()));
 
         res.status(200).json(targetTalkers);
     }));
@@ -40,9 +39,7 @@ router.post('/',
     rescue(async (req, res, _next) => {
         const { name, age, talk } = req.body;
 
-        const talkersJson = await fs.readFile(TALKER_FILE);
-
-        const talkers = await JSON.parse(talkersJson);
+        const talkers = await readJsonFile(TALKER_FILE);
 
         const newTalker = { id: talkers.length + 1, name, age, talk };
 
@@ -62,8 +59,7 @@ router.put('/:id',
         const { id } = req.params;
         const { name, age, talk } = req.body;
 
-        const talkersJson = await fs.readFile(TALKER_FILE);
-        const talkers = JSON.parse(talkersJson);
+        const talkers = await readJsonFile(TALKER_FILE);
 
         const talkerIndex = talkers.findIndex((t) => t.id === +id);
 
@@ -81,8 +77,7 @@ router.delete('/:id',
     rescue(async (req, res, _next) => {
         const { id } = req.params;
 
-        const talkersJson = await fs.readFile(TALKER_FILE);
-        const talkers = JSON.parse(talkersJson);
+        const talkers = await readJsonFile(TALKER_FILE);
 
         const newTalkers = talkers.filter((t) => t.id !== +id);
 
@@ -94,9 +89,7 @@ router.delete('/:id',
 router.get('/:id', rescue(async (req, res, _next) => {
     const { id } = req.params;
 
-    const talkersJson = await fs.readFile(TALKER_FILE);
-
-    const talkers = JSON.parse(talkersJson);
+    const talkers = await readJsonFile(TALKER_FILE);
 
     const talker = talkers.find((t) => t.id === +id);
 
